@@ -15,7 +15,7 @@ public class GameService : IGameService
     public int GetRandomNumber()
     {
         var random = new Random();
-        return random.Next(1, 100);
+        return random.Next(1, 1000);
     }
 
     public async Task<int> SaveOrUpdateGame(GameDTO gameDto)
@@ -52,6 +52,17 @@ public class GameService : IGameService
         game.Rules = result;
         
         return await db.SaveChangesAsync();
+    }
+
+    public async Task<int> DeleteGame(int gameId)
+    {
+        var game = await db.Games.Include(s=>s.Rules).FirstOrDefaultAsync(s=>s.Id == gameId)
+                   ?? throw new InvalidOperationException($"Game with id {gameId} not found");
+        
+        db.Games.Remove(game);
+        await db.SaveChangesAsync();
+        
+        return 0;
     }
 
     private ICollection<Rule> SynchronizeRules(Game game, ICollection<RuleDTO> ruleDtos)

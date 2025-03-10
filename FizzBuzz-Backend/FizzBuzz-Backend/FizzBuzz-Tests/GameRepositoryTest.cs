@@ -14,6 +14,44 @@ public class GameRepositoryTest : BaseGameContextTest
     }
 
     [Fact]
+    public async Task DeleteGameOk()
+    {
+        using (var context = new GameContext(options))
+        {
+            context.Games.Add(new Game
+            {
+                Id = 1,
+                Title = "FizzBuzzBozz",
+                Author = "Davis",
+                Rules = new List<Rule>
+                {
+                    new Rule
+                    {
+                        Id = 1,
+                        GameId = 1,
+                        Number = 5,
+                        RuleName = "Fizz"
+                    }
+                }
+            });
+
+            await context.SaveChangesAsync();
+        }
+        
+        // Act
+        var result = await _gameService.DeleteGame(1);
+        
+        // Assert
+        Assert.Equal(0, result);
+        using (var context = new GameContext(options))
+        {
+            Assert.Empty(context.Games);
+            Assert.Empty(context.Rules);
+        }
+    }
+    
+
+    [Fact]
     public async Task UpdateGameOk()
     {
         // Arrange

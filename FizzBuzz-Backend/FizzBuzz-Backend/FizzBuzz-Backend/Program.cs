@@ -5,7 +5,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddTransient<GameContext>();
-builder.Services.AddSingleton<IGameService, GameService>();
+builder.Services.AddTransient<IGameService, GameService>();
 
 // Get connection string from configuration
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
