@@ -20,26 +20,74 @@ public class GameService : IGameService
 
     public async Task<int> SaveOrUpdateGame(GameDTO gameDto)
     {
-        Game model = gameDto.Id == 0 ? new Game() : await db.Games.Include(g => g.Rules).FirstOrDefaultAsync(g => g.Id == gameDto.Id);
-
-        if (model == null)
-        {
-            throw new InvalidOperationException($"Cannot find game model with id = {gameDto.Id}");
-        }
-
-        model.Author = gameDto.Author;
-        model.Title = gameDto.Title;
-        model.Rules ??= new List<Rule>();
-
+        // Create new game
         if (gameDto.Id == 0)
         {
-            foreach (var r in gameDto.Rules)
+            var newGame = new Game
             {
-                model.Rules.Add(new Rule { RuleName = r.RuleName, Number = r.Number });
-            }
-            await db.Games.AddAsync(model);
+                Author = gameDto.Author,
+                Title = gameDto.Title,
+                Rules = gameDto.Rules.Select(r => new Rule { 
+                    RuleName = r.RuleName, 
+                    Number = r.Number 
+                }).ToList()
+            };
+        
+            await db.Games.AddAsync(newGame);
+            return await db.SaveChangesAsync();
         }
     
+        // Update existing game
+        var game = await db.Games.Include(g => g.Rules)
+                       .FirstOrDefaultAsync(g => g.Id == gameDto.Id)
+                   ?? throw new InvalidOperationException($"Game with id {gameDto.Id} not found");
+
+        // Update properties
+        game.Author = gameDto.Author;
+        game.Title = gameDto.Title;
+    
+        // Synchronize rules
+        var result = SynchronizeRules(game, gameDto.Rules);
+    
+        game.Rules = result;
+        
         return await db.SaveChangesAsync();
+    }
+
+    private ICollection<Rule> SynchronizeRules(Game game, ICollection<RuleDTO> ruleDtos)
+    {
+        // Remove rules not in DTO
+        foreach (var rule in game.Rules.ToList())
+        {
+            if (!ruleDtos.Any(r => r.Id == rule.Id && r.Id != 0))
+            {
+                db.Remove(rule);
+            }
+        }
+    
+        // Update or add rules
+        foreach (var ruleDto in ruleDtos)
+        {
+            if (ruleDto.Id != 0)
+            {
+                // Update existing rule
+                var rule = game.Rules.FirstOrDefault(r => r.Id == ruleDto.Id);
+                if (rule != null)
+                {
+                    rule.RuleName = ruleDto.RuleName;
+                    rule.Number = ruleDto.Number;
+                }
+            }
+            else
+            {
+                // Add new rule
+                game.Rules.Add(new Rule { 
+                    RuleName = ruleDto.RuleName, 
+                    Number = ruleDto.Number 
+                });
+            }
+        }
+        
+        return game.Rules;
     }
 }
