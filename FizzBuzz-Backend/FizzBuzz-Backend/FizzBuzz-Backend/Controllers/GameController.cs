@@ -1,3 +1,4 @@
+using FizzBuzz_Services;
 using Microsoft.AspNetCore.Mvc;
 namespace FizzBuzz_Backend.Controllers;
 
@@ -5,11 +6,16 @@ namespace FizzBuzz_Backend.Controllers;
 [Route("[controller]")]
 public class GameController : ControllerBase
 {
+    private IGameService _gameService;
+    public GameController(IGameService gameService)
+    {
+        _gameService = gameService; 
+    }
+    
     [HttpGet(Name = "GetRandomNumber")]
     public async Task<ActionResult<int>> GetRandomNumber()
     {
-        var random = new Random();
-        return Ok(random.Next(1, 100));
+        return Ok(_gameService.GetRandomNumber());
     }
     
 }
