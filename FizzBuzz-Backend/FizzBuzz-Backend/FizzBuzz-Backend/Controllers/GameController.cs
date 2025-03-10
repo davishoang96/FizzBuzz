@@ -3,11 +3,12 @@ using FizzBuzz_Common;
 using FizzBuzz_Database;
 using FizzBuzz_Services;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace FizzBuzz_Backend.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class GameController : ControllerBase
 {
     private IGameService _gameService;
@@ -16,7 +17,8 @@ public class GameController : ControllerBase
         _gameService = gameService; 
     }
 
-    [HttpGet(Name = "GetAllGames")]
+    [HttpGet]
+    [Route("GetAllGames")]
     public async Task<ActionResult<IEnumerable<GameDTO>>> GetAllGames()
     {
         var games = await _gameService.GetAllGames();
@@ -35,7 +37,7 @@ public class GameController : ControllerBase
         return Ok(dtos);
     }
     
-    [HttpGet(Name = "GetGameById")]
+    [HttpGet("GetGameById")]
     public async Task<ActionResult<GameDTO>> GetGameById([FromQuery] int id)
     {
         try
@@ -67,13 +69,13 @@ public class GameController : ControllerBase
         }
     }
     
-    [HttpGet(Name = "GetRandomNumber")]
+    [HttpGet("GetRandomNumber")]
     public async Task<ActionResult<int>> GetRandomNumber()
     {
         return Ok(_gameService.GetRandomNumber());
     }
 
-    [HttpDelete(Name = "DeleteGame")]
+    [HttpDelete("DeleteGame")]
     public async Task<ActionResult> DeleteGame([FromQuery] int gameId)
     {
         var res = await _gameService.DeleteGame(gameId);
@@ -87,7 +89,7 @@ public class GameController : ControllerBase
         }
     }
 
-    [HttpPost(Name = "SaveOrUpdateGame")]
+    [HttpPost("SaveOrUpdateGame")]
     public async Task<ActionResult<int>> SaveOrUpdateGame([FromBody] GameDTO dto)
     {
         var res = await _gameService.SaveOrUpdateGame(dto);
