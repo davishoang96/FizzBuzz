@@ -5,11 +5,6 @@ namespace FizzBuzz_Backend.Controllers;
 [Route("[controller]")]
 public class GameController : ControllerBase
 {
-    public GameController()
-    {
-        
-    }
-
     [HttpGet(Name = "GetRandomNumber")]
     public async Task<ActionResult<int>> GetRandomNumber()
     {
