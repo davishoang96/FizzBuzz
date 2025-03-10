@@ -1,3 +1,4 @@
+using AutoFixture;
 using FizzBuzz_Common;
 using FizzBuzz_Database;
 using FizzBuzz_Services;
@@ -13,6 +14,29 @@ public class GameRepositoryTest : BaseGameContextTest
         _gameService = new GameService(new GameContext(options));
     }
 
+    [Fact]
+    public async Task GetAllGameTest()
+    {
+        // Arrange
+        var fixture = new Fixture();
+        var games = fixture.Build<Game>()
+            .Without(s=>s.Id)
+            .Without(s=>s.Rules)
+            .CreateMany(10);
+        
+        using (var context = new GameContext(options))
+        {
+            context.AddRange(games);
+            await context.SaveChangesAsync();
+        }
+        
+        // Act
+        var result = await _gameService.GetAllGames();
+        
+        // Assert
+        Assert.Equal(games.Count(), result.Count());
+    }
+    
     [Fact]
     public async Task DeleteGameOk()
     {

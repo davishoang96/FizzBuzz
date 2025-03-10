@@ -65,6 +65,19 @@ public class GameService : IGameService
         return 0;
     }
 
+    public async Task<IEnumerable<Game>> GetAllGames()
+    {
+        return db.Games.Include(g => g.Rules);
+    }
+
+    public async Task<Game> GetGameById(int gameId)
+    {
+        var game = await db.Games.Include(s=>s.Rules).FirstOrDefaultAsync(s=>s.Id == gameId)
+                   ?? throw new InvalidOperationException($"Game with id {gameId} not found");
+        
+        return game;
+    }
+
     private ICollection<Rule> SynchronizeRules(Game game, ICollection<RuleDTO> ruleDtos)
     {
         // Remove rules not in DTO

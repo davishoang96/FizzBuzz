@@ -1,4 +1,6 @@
+using System.Globalization;
 using FizzBuzz_Common;
+using FizzBuzz_Database;
 using FizzBuzz_Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +14,57 @@ public class GameController : ControllerBase
     public GameController(IGameService gameService)
     {
         _gameService = gameService; 
+    }
+
+    [HttpGet(Name = "GetAllGames")]
+    public async Task<ActionResult<IEnumerable<GameDTO>>> GetAllGames()
+    {
+        var games = await _gameService.GetAllGames();
+        var dtos = games.Select(game => new GameDTO
+        {
+            Id = game.Id,
+            Author = game.Author,
+            Title = game.Title,
+            Rules = game.Rules.Select(s => new RuleDTO
+            {
+                Id = s.Id,
+                RuleName = s.RuleName,
+                Number = s.Number
+            }).ToList() // Ensure List conversion
+        }).ToList();
+        return Ok(dtos);
+    }
+    
+    [HttpGet(Name = "GetGameById")]
+    public async Task<ActionResult<GameDTO>> GetGameById([FromQuery] int id)
+    {
+        try
+        {
+            var game = await _gameService.GetGameById(id);
+            var dto = new GameDTO
+            {
+                Id = game.Id,
+                Author = game.Author,
+                Title = game.Title,
+                Rules = new List<RuleDTO>()
+            };
+
+            foreach (var rule in game.Rules)
+            {
+                dto.Rules.Add(new RuleDTO
+                {
+                    Id = rule.Id,
+                    Number = rule.Number,
+                    RuleName = rule.RuleName,
+                });
+            }
+
+            return Ok(dto);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
     
     [HttpGet(Name = "GetRandomNumber")]
