@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\FizzBuzz-Backend\FizzBuzz-Database\FizzBuzz-Database.csproj" />
+      <ProjectReference Include="..\FizzBuzz-Database\FizzBuzz-Database.csproj" />
       <ProjectReference Include="..\FizzBuzz-Common\FizzBuzz-Common.csproj" />
     </ItemGroup>
 
