@@ -19,9 +19,19 @@ const GamesPage: React.FC = () => {
         setLoading(false);
       }
     };
-
     fetchGames();
   }, []);
+
+  const deleteGame = async (gameId: number) => {
+    try {
+      await gameService.deleteGame(gameId);  // Call the delete API
+      // Remove the deleted game from the state
+      setGames(games.filter(game => game.id !== gameId));
+    } catch (err) {
+      console.error('Error deleting game:', err);
+      setError('Error deleting the game');
+    }
+  };
 
   if (loading) return <div className="text-center"><div className="spinner-border" role="status"><span className="sr-only">Loading...</span></div></div>;
   if (error) return <div className="alert alert-danger">{error}</div>;
@@ -47,6 +57,12 @@ const GamesPage: React.FC = () => {
                     ))}
                   </ul> */}
                   <button className="btn btn-secondary">Edit</button> {/* Edit Button */}
+                  <button
+                    className="btn btn-danger"
+                    onClick={() => deleteGame(game.id)} // Call deleteGame function
+                  >
+                    Delete
+                  </button> {/* Delete Button */}
                   <button className="btn btn-primary">Play</button> {/* Edit Button */}
                 </div>
               </div>

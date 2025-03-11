@@ -17,7 +17,6 @@ export interface GameDTO {
 // API base URL
 const API_BASE_URL = 'https://localhost:7285/api/Game';
 
-// Game service with reusable API calls
 export const gameService = {
   saveOrUpdateGame: async (game: GameDTO): Promise<number> => {
     try {
@@ -28,6 +27,23 @@ export const gameService = {
       throw error;
     }
   },
+
+  deleteGame: async (id: number): Promise<boolean> => {
+    try {
+      const response = await axios.delete(`${API_BASE_URL}/DeleteGame`, {
+        params: { gameId: id },
+      });
+  
+      if (response.status === 200) {
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error(`Error deleting game with ID ${id}:`, error);
+      return false;
+    }
+  },
+  
   
   getGameById: async (id: number): Promise<GameDTO> => {
     try {
