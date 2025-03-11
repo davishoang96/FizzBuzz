@@ -2,14 +2,12 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import GameForm from './components/add-game';
+import GetAllGames from './components/get-all-games';
 
 
 const Home = () => (
-  <div className="container py-5 text-center">
-    <h1>Game Management System</h1>
-    <div className="mt-4">
-      <Link to="/add-game" className="btn btn-primary">Add New Game</Link>
-    </div>
+  <div className="container py-2 text-center">
+    <GetAllGames /> 
   </div>
 );
 
@@ -18,7 +16,7 @@ function App() {
     <BrowserRouter>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container">
-          <Link className="navbar-brand" to="/">Game Manager</Link>
+          <Link className="navbar-brand" to="/">FizzBuzz Games</Link>
           <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span className="navbar-toggler-icon"></span>
           </button>
