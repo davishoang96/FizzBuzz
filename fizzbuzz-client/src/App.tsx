@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import GameForm from './components/add-game';
 import GetAllGames from './components/get-all-games';
-
+import PlayGame from "./components/play-game";
 
 const Home = () => (
   <div className="container py-2 text-center">
@@ -36,6 +36,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/add-game" element={<GameForm />} />
+        <Route path="/play-game/:gameId" element={<PlayGame />} /> {/* Dynamic route */}
       </Routes>
     </BrowserRouter>
   );

@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { gameService, GameDTO, RuleDTO } from '../services/gameServices'; // Import the gameService
 import 'bootstrap/dist/css/bootstrap.min.css'; // Import Bootstrap CSS
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const GamesPage: React.FC = () => {
   const [games, setGames] = useState<GameDTO[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchGames = async () => {
@@ -56,14 +58,13 @@ const GamesPage: React.FC = () => {
                       </li>
                     ))}
                   </ul> */}
-                  <button className="btn btn-secondary">Edit</button> {/* Edit Button */}
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => deleteGame(game.id)} // Call deleteGame function
-                  >
+                  <button className="btn btn-secondary">Edit</button>
+                  <button className="btn btn-danger" onClick={() => deleteGame(game.id)}>
                     Delete
-                  </button> {/* Delete Button */}
-                  <button className="btn btn-primary">Play</button> {/* Edit Button */}
+                  </button>
+                  <button className="btn btn-primary" onClick={() => navigate(`/play-game/${game.id}`)}>
+                    Play
+                  </button>
                 </div>
               </div>
             </div>
